@@ -13,4 +13,8 @@ module ApplicationHelper
         flash_type.to_s
     end
   end
+
+  def icon(shape)
+      "<span class='glyphicon glyphicon-#{shape}'></span>".html_safe
+  end
 end
