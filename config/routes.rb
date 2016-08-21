@@ -4,6 +4,9 @@ Rails.application.routes.draw do
   devise_for :users
   root 'welcome#index'
 
+  get 'posts/:post_id' => 'home#show'
+  get 'reconum/:post_id' => 'posts#reconum'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

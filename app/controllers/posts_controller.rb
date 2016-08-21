@@ -1,21 +1,39 @@
 class PostsController < ApplicationController
-  before_action :authenticate_user!, except: [ :index, :show ]
+  before_action :authenticate_user!, except: [:index, :show ]
   before_action :set_post, only: [:show, :edit, :update, :destroy]
 
   # GET /posts
   # GET /posts.json
   def index
-    @posts = Post.all.reverse
-  end
-
-  # GET /posts/1
-  # GET /posts/1.json
-  def show
+    @posts = Post.all.order('id desc').
+      paginate(page: params[:page], per_page: 3)
   end
 
   # GET /posts/new
   def new
     @post = Post.new
+  end
+
+  # GET /posts/1
+  # GET /posts/1.json
+  def show
+    # 한번 클릭할 때마다 증가
+    @post.hit = @post.hit + 1
+    @post.save
+  end
+
+  def reconum
+    @post = Post.find(params[:post_id])
+    #@user = User.find(params[:id])
+      respond_to do |format|
+        if current_user.email == @post.user.email # 자신의 글인지 아닌지 판단
+          format.html { redirect_to "/posts", notice: '자신의 글은 추천할 수 없습니다.'}
+        else
+          @post.reconum = @post.reconum + 1  # 추천수 증가
+          @post.save
+          format.html { redirect_to "/posts", notice: '추천 성공!' }
+        end
+      end
   end
 
   # GET /posts/1/edit

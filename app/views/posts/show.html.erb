@@ -1,13 +1,21 @@
-<p id="notice"><%= notice %></p>
-
-<div class='post'>
+<div class="post">
   <div class="title">
-    <h3>Title:
-    <%= @post.title %></h3>
+    <h3> Title: <%= @post.title %> </h3>
+    <p> 조회수 : <%= @post.hit %> </p>
+    <p> 추천수 : <%= @post.reconum %> </p>
   </div>
 
   <div class="content">
     <%= simple_format @post.content %>
+  </div>
+
+  <!-- 추천을 위한 코드 -->
+  <div class="recommend">
+    <a href="/reconum/<%= @post.id %>">
+      <button type="button" class="btn btn-primary reconum_submit" aria-label="Left Align">
+       <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+      </button>
+    </a>
   </div>
 
   <div class="user">
@@ -20,3 +28,25 @@
 <hr>
 <%= link_to 'Edit', edit_post_path(@post), class: 'btn btn-default' %>
 <%= link_to 'Back', posts_path, class: 'btn btn-default' %>
+
+
+<script>
+// ajax로 추천이 눌렸을때 추천수 증가가 page reload 없이 바로 작동하도록 하기위한 코드
+$(function() {  // 페이지가 다 로딩되면 실행하도록 설정
+  $('reconum_submit').click(function({
+
+   $.ajax({
+     method: "POST",
+     url: "/posts"
+   })
+
+   success: function(){
+     alert( "추천수가 증가 되었습니다.");
+   },
+   error: function() {
+     alert( "에러 발생!")
+   }
+
+  });
+)});
+</script>

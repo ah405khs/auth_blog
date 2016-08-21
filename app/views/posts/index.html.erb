@@ -1,5 +1,3 @@
-<p id="notice"><%= notice %></p>
-
 <h2>Listing posts</h2>
 
 <table class="table">
@@ -7,6 +5,8 @@
     <tr>
       <th>Title</th>
       <th>Created by</th>
+      <th> 조회수 </th>
+      <th> 추천수 </th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -16,6 +16,8 @@
       <tr>
         <td class="col-md-6 col-xs-6"><%= post.title %></td>
         <td><%= post.user.present? ? post.user.email : "n/a" %>, <%= time_ago_in_words(post.created_at) %> ago</td>
+        <td><%= post.hit %></td>
+        <td><%= post.reconum %></td>
         <td>
           <%= link_to icon('eye-open'), post %>&nbsp;
           <% if user_signed_in? %>
@@ -27,6 +29,8 @@
     <% end %>
   </tbody>
 </table>
+<%= will_paginate @posts, previous_label: '<이전 페이지 ', next_label: ' 다음 페이지>' %>
+<!-- 페이지 하는거 완성 -->
 
 <br>
 

@@ -17,8 +17,11 @@ ActiveRecord::Schema.define(version: 20160803060010) do
     t.string   "title"
     t.text     "content"
     t.integer  "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "hit",        default: 0
+    t.integer  "reconum",    default: 0
+    t.boolean  "grand",      default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "posts", ["user_id"], name: "index_posts_on_user_id"
@@ -35,6 +38,7 @@ ActiveRecord::Schema.define(version: 20160803060010) do
   add_index "roles", ["name"], name: "index_roles_on_name"
 
   create_table "users", force: :cascade do |t|
+    t.integer  "user_id",                default: 1,  null: false
     t.string   "email",                  default: "", null: false
     t.string   "encrypted_password",     default: "", null: false
     t.string   "reset_password_token"
