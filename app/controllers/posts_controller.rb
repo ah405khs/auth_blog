@@ -23,17 +23,48 @@ class PostsController < ApplicationController
   end
 
   def reconum
-    @post = Post.find(params[:post_id])
-    #@user = User.find(params[:id])
-      respond_to do |format|
-        if current_user.email == @post.user.email # 자신의 글인지 아닌지 판단
-          format.html { redirect_to "/posts", notice: '자신의 글은 추천할 수 없습니다.'}
+   @post = Post.find(params[:post_id])
+   @recommend = Recommend.new #따로 이메일은 확인하기 위한 DB
+
+   respond_to do |format|
+
+   if current_user.email == @post.user.email # 자신의 글인지 아닌지 판단
+    format.html { redirect_to "/posts"  , notice: '자신의 글은 추천할 수 없습니다.'}
+   else
+      if @post.initNum == 0 #-> default = 0 
+                                  #
+        @recommend.email = current_user.email
+        @post.initNum = 1 # initNum 최초 추천후 바꿈.
+        @post.reconum = @post.reconum + 1  # 추천수 증가
+        @recommend.save
+        @post.save
+
+        format.html { redirect_to "/posts", notice: '추천 성공!' }
+          
+      else
+        @reco = Recommend.all #recommend에 저장되어 있는 DB 갖고오기
+          reco_bool = 0 #current_user.email이 이미 들어있으면 1로 바뀜
+            
+          @reco.each do |r| #recommend DB 다 검사 
+            if r.email == current_user.email
+              reco_bool = 1
+               break
+            end
+          end
+            
+
+        if reco_bool == 1
+          format.html { redirect_to "/posts", notice: '이미 추천한 글 입니다.'}
         else
+          @recommend.email = current_user.email
           @post.reconum = @post.reconum + 1  # 추천수 증가
           @post.save
+          @recommend.save
           format.html { redirect_to "/posts", notice: '추천 성공!' }
         end
       end
+   end
+   end
   end
 
   # GET /posts/1/edit
@@ -46,6 +77,8 @@ class PostsController < ApplicationController
   def create
     @post = Post.new(post_params)
     @post.user = current_user
+
+    
 
     respond_to do |format|
       if @post.save
